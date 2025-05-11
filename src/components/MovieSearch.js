@@ -5,7 +5,7 @@ const MovieSearch = () => {
   const [movies, setMovies] = useState([]);
   const [error, setError] = useState('');
 
-  const fetchMovies = async () => {
+  const fetchMovies = () => {
     if (!query.trim()) {
       setError('Please enter a movie name.');
       setMovies([]);
@@ -15,25 +15,27 @@ const MovieSearch = () => {
     const API_KEY = '99eb9fd1';
     const url = `https://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`;
 
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-
-      if (data.Response === 'True') {
-        setMovies(data.Search);
-        setError('');
-      } else {
-        setError('Invalid movie name. Please try again.');
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.Response === 'True') {
+          setMovies(data.Search);
+          setError('');
+        } else {
+          setError('Invalid movie name. Please try again.');
+          setMovies([]);
+        }
+      })
+      .catch(() => {
+        setError('Something went wrong. Please try again later.');
         setMovies([]);
-      }
-    } catch (err) {
-      setError('Something went wrong. Please try again later.');
-      setMovies([]);
-    }
+      });
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') fetchMovies();
+    if (e.key === 'Enter') {
+      fetchMovies();
+    }
   };
 
   return (
