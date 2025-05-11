@@ -16,7 +16,7 @@ const MovieSearch = () => {
     const url = `https://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`;
 
     fetch(url)
-      .then((response) => response.json())
+      .then((res) => res.json())
       .then((data) => {
         if (data.Response === 'True') {
           setMovies(data.Search);
@@ -32,39 +32,39 @@ const MovieSearch = () => {
       });
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      fetchMovies();
-    }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    fetchMovies();
   };
 
   return (
     <div style={{ textAlign: 'center', padding: '20px' }}>
       <h2>Search Movie</h2>
-      <input
-        type="text"
-        placeholder="Search movie title..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={handleKeyDown}
-      />
-      <button onClick={fetchMovies}>Search</button>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Search movie title..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <button type="submit">Search</button>
+      </form>
 
       {error && <p className="error" style={{ color: 'red' }}>{error}</p>}
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', marginTop: '20px' }}>
+      <ul style={{ listStyle: 'none', padding: 0, marginTop: '20px' }}>
         {movies.map((movie) => (
-          <div key={movie.imdbID} style={{ margin: '10px', width: '180px' }}>
+          <li key={movie.imdbID} style={{ margin: '10px' }}>
             <img
               src={movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/150'}
               alt={movie.Title}
-              style={{ width: '100%', height: 'auto', borderRadius: '8px' }}
+              style={{ width: '150px', borderRadius: '8px' }}
             />
             <h4>{movie.Title}</h4>
             <p>({movie.Year})</p>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 };
